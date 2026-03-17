@@ -3,7 +3,7 @@ import customtkinter as ctk
 from src.viewcontroller.frames.UserConnectionFrame import UserConnectionFrame
 from src.viewcontroller.frames.NewAccountFrame import NewAccountFrame
 from src.viewcontroller.frames.MainFrame import MainFrame
-from src.viewcontroller.frames.HistoryFrame import HistoryFrame
+from src.viewcontroller.frames.TransactionsRecordFrame import TransactionsRecordFrame
 
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
@@ -27,7 +27,7 @@ class App(ctk.CTk):
 
         self.frames = {}
 
-        for FrameClass in (UserConnectionFrame, NewAccountFrame, MainFrame, HistoryFrame):
+        for FrameClass in (UserConnectionFrame, NewAccountFrame, MainFrame, TransactionsRecordFrame):
             frame_instance = FrameClass(container, self)
             self.frames[FrameClass.__name__] = frame_instance
 

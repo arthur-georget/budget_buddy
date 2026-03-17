@@ -20,11 +20,11 @@ class MainFrame(ctk.CTkFrame):
         deposit_button.grid(row = 3, column = 1, padx = 10, pady = 10)
 
 
-    def __ask_withdraw_amount():
+    def __ask_withdraw_amount(self):
         print("Withdraw")
         pass
 
     
-    def __ask_deposit_amount():
+    def __ask_deposit_amount(self):
         print("Deposit")
         pass
