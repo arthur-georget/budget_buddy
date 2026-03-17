@@ -8,7 +8,7 @@ class MainFrame(ctk.CTkFrame):
         
         label.grid(row = 0, column = 4, padx = 10, pady = 10) 
  
-        history_button = ctk.CTkButton(self, text ="History",
-        command = lambda : controller.show_frame("HistoryFrame"))
+        transactions_record_button = ctk.CTkButton(self, text ="Transactions record",
+        command = lambda : controller.show_frame("transactions_recordFrame"))
     
-        history_button.grid(row = 1, column = 1, padx = 10, pady = 10)
+        transactions_record_button.grid(row = 1, column = 1, padx = 10, pady = 10)
