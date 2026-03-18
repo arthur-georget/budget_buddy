@@ -1,7 +1,7 @@
 import customtkinter as ctk
 
 from src.viewcontroller.frames.UserConnectionFrame import UserConnectionFrame
-from src.viewcontroller.frames.NewAccountFrame import NewAccountFrame
+from src.viewcontroller.frames.NewUserFrame import NewUserFrame
 from src.viewcontroller.frames.MainFrame import MainFrame
 from src.viewcontroller.frames.TransactionsRecordFrame import TransactionsRecordFrame
 
@@ -27,7 +27,7 @@ class App(ctk.CTk):
 
         self.frames = {}
 
-        for FrameClass in (UserConnectionFrame, NewAccountFrame, MainFrame, TransactionsRecordFrame):
+        for FrameClass in (UserConnectionFrame, NewUserFrame, MainFrame, TransactionsRecordFrame):
             frame_instance = FrameClass(container, self)
             self.frames[FrameClass.__name__] = frame_instance
 
