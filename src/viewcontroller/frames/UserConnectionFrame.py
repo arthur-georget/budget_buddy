@@ -6,21 +6,26 @@ class UserConnectionFrame(ctk.CTkFrame):
         ctk.CTkFrame.__init__(self, parent)
         self.controller = controller
         
-        label = ctk.CTkLabel(self, text="User Connection", font=("Arial", 12, "bold"))
-        label.grid(row=0, column=0, columnspan=2, padx=10, pady=10) 
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(6, weight=1)
 
-        self.email_input = ctk.CTkEntry(self, placeholder_text="Email", width=200)
-        self.email_input.grid(row=1, column=0, columnspan=2, pady=10)
+        label = ctk.CTkLabel(self, text="User Connection", font=("Arial", 24, "bold"))
+        label.grid(row=1, column=0, pady=(0, 30)) 
 
-        self.password_input = ctk.CTkEntry(self, placeholder_text="Password", show="*", width=200)
-        self.password_input.grid(row=2, column=0, columnspan=2, pady=10)
+        self.email_input = ctk.CTkEntry(self, placeholder_text="Email", width=280, height=40)
+        self.email_input.grid(row=2, column=0, pady=10)
 
-        self.login_button = ctk.CTkButton(self, text="Login", command=self.login)
-        self.login_button.grid(row=3, column=0, columnspan=2, pady=10)
+        self.password_input = ctk.CTkEntry(self, placeholder_text="Password", show="*", width=280, height=40)
+        self.password_input.grid(row=3, column=0, pady=10)
 
-        self.create_account_button = ctk.CTkButton(self, text="New Account",
+        self.login_button = ctk.CTkButton(self, text="Login", width=280, height=45, compound="left", command=self.login)
+        self.login_button.grid(row=4, column=0, pady=(20, 10))
+
+        self.create_account_button = ctk.CTkButton(self, text="New Account", width=280, height=40,
+                                                  fg_color="transparent", border_width=1,
                                                   command=lambda: controller.show_frame("NewUserFrame"))
-        self.create_account_button.grid(row=4, column=0, columnspan=2, pady=10)
+        self.create_account_button.grid(row=5, column=0, pady=10)
 
     def credentials_check(self):
         return self.email_input.get() == "admin" and self.password_input.get() == "1234"
