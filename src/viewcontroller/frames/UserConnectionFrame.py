@@ -14,6 +14,6 @@ class UserConnectionFrame(ctk.CTkFrame):
         main_menu_button.grid(row = 1, column = 1, padx = 10, pady = 10)
  
         new_account_button = ctk.CTkButton(self, text ="New Account",
-        command = lambda : controller.show_frame("NewAccountFrame"))
+        command = lambda : controller.show_frame("NewUserFrame"))
     
         new_account_button.grid(row = 2, column = 1, padx = 10, pady = 10)
