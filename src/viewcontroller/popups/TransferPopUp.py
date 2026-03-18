@@ -62,3 +62,4 @@ class TransferPopUp(ctk.CTkToplevel):
         self.error_label.configure(text="")
         print(f"Transfer: {self.amount_input.get()} -> {self.target_account_id_input.get()}")
         self.destroy()
+        
