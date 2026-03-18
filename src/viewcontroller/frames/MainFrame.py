@@ -74,4 +74,4 @@ class MainFrame(ctk.CTkFrame):
                     self.__ask_amount(operation_type)
 
     def __instantiate_transfer_popup(self):
-        TransferPopUp(self, self.__account_selected)
+        TransferPopUp(self)

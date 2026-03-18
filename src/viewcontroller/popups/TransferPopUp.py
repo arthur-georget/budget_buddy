@@ -2,22 +2,17 @@ import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 
 class TransferPopUp(ctk.CTkToplevel):
-    def __init__(self, parent, bankaccount):
-        super().__init__(parent)
+    def __init__(self, parent):
+        ctk.CTkToplevel.__init__(self, parent)
         
         self.title("Secure Transfer")
         self.geometry("400x450")
         self.resizable(False, False)
-        self.bankaccount = bankaccount
+        self.__selected_account = parent.get_selected_account()
         
         self.grid_columnconfigure(0, weight=1)
-        self.after(10, self._set_modal)
+        self.after(10, self.grab_set)
         self._setup_ui()
-
-    def _set_modal(self):
-        self.grab_set()
-        self.focus()
-        self.lift()
 
     def _setup_ui(self):
         ctk.CTkLabel(self, text="NEW TRANSFER", font=("Arial", 16, "bold")).grid(row=0, pady=(20, 10))
@@ -34,7 +29,7 @@ class TransferPopUp(ctk.CTkToplevel):
         self.ok_button = ctk.CTkButton(self, text="Confirm", width=280, height=40, command=self.call_create_transaction)
         self.ok_button.grid(row=4, pady=(20, 10))
 
-        self.cancel_button = ctk.CTkButton(self, text="Cancel", fg_color="transparent", border_width=1, width=280, height=35, command=self.destroy)
+        self.cancel_button = ctk.CTkButton(self, text="Cancel", border_width=1, width=280, height=35, command=self.destroy)
         self.cancel_button.grid(row=5, pady=10)
 
     def verify_inputs(self):
@@ -47,7 +42,7 @@ class TransferPopUp(ctk.CTkToplevel):
         try:
             amount = float(amount_str)
             if amount <= 0: return False, "Invalid amount."
-            if hasattr(self.bankaccount, 'balance') and amount > self.bankaccount.balance:
+            if hasattr(self.__selected_account, 'balance') and amount > self.__selected_account.balance:
                 return False, "Insufficient funds."
         except ValueError:
             return False, "Numeric value required."
@@ -57,14 +52,12 @@ class TransferPopUp(ctk.CTkToplevel):
     def call_create_transaction(self):
         is_valid, msg = self.verify_inputs()
         
-        
         if not is_valid:
            
             self.error_label.configure(text=msg)
             return
 
+        success_popup = CTkMessagebox(title="Success", message="Transfer initiated successfully!", icon="check", option_1="Close")
         
-        CTkMessagebox(title="Success", message="Transfer initiated successfully!", icon="check", option_1="Close")
-        
-        
-        self.destroy()
+        if success_popup.get() == "Close":
+            self.destroy()
