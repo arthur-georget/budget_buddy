@@ -58,11 +58,10 @@ class TransferPopUp(ctk.CTkToplevel):
         is_valid, msg = self.verify_inputs()
         
         if not is_valid:
+            # Optionnel : Tu peux utiliser une MessageBox ici aussi si tu veux
             self.error_label.configure(text=msg)
             return
 
-        
-        CTkMessagebox(title="Success", message="Transfer initiated successfully!", icon="check", option_1="Close")
-        
-        
+        self.error_label.configure(text="")
+        print(f"Transfer: {self.amount_input.get()} -> {self.target_account_id_input.get()}")
         self.destroy()
