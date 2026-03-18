@@ -1,10 +1,15 @@
+from src.model.BankAccount import BankAccount
+
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
+from src.viewcontroller.popups.TransferPopUp import TransferPopUp
 
 class MainFrame(ctk.CTkFrame):
     def __init__(self, parent, controller): 
         ctk.CTkFrame.__init__(self, parent)
-        
+
+        self.__account_selected = BankAccount()
+
         label = ctk.CTkLabel(self, text ="Main menu", font = ("Arial", 12, "bold"))
         label.grid(row = 0, column = 4, padx = 10, pady = 10) 
  
@@ -19,6 +24,10 @@ class MainFrame(ctk.CTkFrame):
         deposit_button = ctk.CTkButton(self, text ="Deposit",
         command = lambda : self.__ask_amount("deposit"))
         deposit_button.grid(row = 3, column = 1, padx = 10, pady = 10)
+
+        transfer_button = ctk.CTkButton(self, text ="Transfer",
+        command = self.__instantiate_transfer_popup)
+        transfer_button.grid(row = 4, column = 1, padx = 10, pady = 10)
 
 
     def __ask_amount(self, operation_type : str):
@@ -59,3 +68,6 @@ class MainFrame(ctk.CTkFrame):
                                               option_2="Retry")
                 if warning_message.get()=="Retry":
                     self.__ask_amount(operation_type)
+
+    def __instantiate_transfer_popup(self):
+        TransferPopUp(self, self.__account_selected)
