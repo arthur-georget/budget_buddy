@@ -8,7 +8,7 @@ class MainFrame(ctk.CTkFrame):
     def __init__(self, parent, controller): 
         ctk.CTkFrame.__init__(self, parent)
 
-        self.__account_selected = BankAccount()
+        self.__selected_account = BankAccount()
 
         label = ctk.CTkLabel(self, text ="Main menu", font = ("Arial", 12, "bold"))
         label.grid(row = 0, column = 4, padx = 10, pady = 10) 
@@ -28,6 +28,10 @@ class MainFrame(ctk.CTkFrame):
         transfer_button = ctk.CTkButton(self, text ="Transfer",
         command = self.__instantiate_transfer_popup)
         transfer_button.grid(row = 4, column = 1, padx = 10, pady = 10)
+
+
+    def get_selected_account(self):
+        return self.__selected_account
 
 
     def __ask_amount(self, operation_type : str):
