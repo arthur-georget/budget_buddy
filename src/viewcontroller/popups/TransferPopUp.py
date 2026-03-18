@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from CTkMessagebox import CTkMessagebox
 
 class TransferPopUp(ctk.CTkToplevel):
     def __init__(self, parent, bankaccount):
@@ -55,11 +56,13 @@ class TransferPopUp(ctk.CTkToplevel):
 
     def call_create_transaction(self):
         is_valid, msg = self.verify_inputs()
+        
         if not is_valid:
             self.error_label.configure(text=msg)
             return
 
-        self.error_label.configure(text="")
-        print(f"Transfer: {self.amount_input.get()} -> {self.target_account_id_input.get()}")
-        self.destroy()
         
+        CTkMessagebox(title="Success", message="Transfer initiated successfully!", icon="check", option_1="Close")
+        
+        
+        self.destroy()
