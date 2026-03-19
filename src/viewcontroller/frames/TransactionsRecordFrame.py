@@ -17,9 +17,9 @@ class TransactionsRecordFrame(ctk.CTkFrame):
         main_button.grid(row = 1, column = 1, padx = 10, pady = 10)
   
         transactions = []
-        for i in range(100):
+        for i in range(1,101):
             transaction = Transaction()
-            transaction.read()
+            transaction.read(i)
             transactions.append(transaction)
 
         categories = []
