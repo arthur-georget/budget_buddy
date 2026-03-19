@@ -2,14 +2,17 @@ from src.model.BankAccount import BankAccount
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from src.viewcontroller.popups.TransferPopUp import TransferPopUp
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 class MainFrame(ctk.CTkFrame):
-    def __init__(self, parent, controller): 
+    def __init__(self, parent, controller, user): 
         ctk.CTkFrame.__init__(self, parent)
         self.controller = controller
+        self.user = user
 
         self.__balance = 1250.0
-        self.__balance_history = [1100.0, 1250.0, 1150.0, 1300.0, 1250.0]
+        self.__balance_history = [1100.0, 1250.0, 1150.0, 1300.0, 1250.0, 1400.0, 1350.0]
         self.__selected_account = BankAccount()
 
         self.grid_columnconfigure(0, weight=1)
@@ -37,32 +40,43 @@ class MainFrame(ctk.CTkFrame):
         self.dashboard_frame.grid(row=0, column=1, rowspan=2, padx=30, pady=30, sticky="nsew")
 
         ctk.CTkLabel(self.dashboard_frame, text="Solde Actuel", font=("Arial", 16, "bold"), text_color=("#1e40af", "#93c5fd")).pack(pady=(40, 5))
-        
         self.balance_label = ctk.CTkLabel(self.dashboard_frame, text=f"{self.__balance:,.1f} €", font=("Arial", 48, "bold"), text_color=("#1A56DB", "#60a5fa"))
         self.balance_label.pack(pady=10)
 
         ctk.CTkLabel(self.dashboard_frame, text="Dépenses Mensuelles", font=("Arial", 14, "bold"), text_color=("#1e40af", "#93c5fd")).pack(pady=(40, 10))
-        
         self.chart_card = ctk.CTkFrame(self.dashboard_frame, fg_color=("#FFFFFF", "#3D3D3D"), corner_radius=15)
         self.chart_card.pack(padx=30, pady=20, fill="both", expand=True)
         
-        ctk.CTkLabel(self.chart_card, text="[ Graphique Linéaire ]", font=("Arial", 12, "italic"), text_color="gray").place(relx=0.5, rely=0.5, anchor="center")
+        self.__render_chart()
 
     def get_selected_account(self):
         return self.__selected_account
 
+    def __render_chart(self):
+        fig, ax = plt.subplots(figsize=(5, 3), dpi=100)
+        is_dark = ctk.get_appearance_mode() == "Dark"
+        bg_color = "#3D3D3D" if is_dark else "#FFFFFF"
+        text_color = "white" if is_dark else "black"
+        fig.patch.set_facecolor(bg_color)
+        ax.set_facecolor(bg_color)
+        ax.plot(self.__balance_history, color='#1f538d', linewidth=3, marker='o', markerfacecolor='#60a5fa')
+        ax.tick_params(axis='both', colors=text_color, labelsize=8)
+        for spine in ax.spines.values():
+            spine.set_color(text_color)
+        ax.grid(True, linestyle='--', alpha=0.3, color=text_color)
+        canvas = FigureCanvasTkAgg(fig, master=self.chart_card)
+        canvas.draw()
+        canvas.get_tk_widget().pack(fill="both", expand=True, padx=10, pady=10)
+
     def __ask_amount(self, operation_type : str):
-        dialog = ctk.CTkInputDialog(text=f"How much money to {operation_type}?", title=operation_type.title())
+        dialog = ctk.CTkInputDialog(text=f"How much to {operation_type}?", title=operation_type.title())
         user_input = dialog.get_input()
         if user_input:
             try:
                 amount = float(user_input)
-                if amount > 0:
-                    CTkMessagebox(title="Success", message=f"{amount}€ {operation_type} successful.", icon="check")
-                else:
-                    CTkMessagebox(title="Error", message="Amount must be positive.", icon="warning")
+                CTkMessagebox(title="Success", message=f"{amount}€ {operation_type} successful.", icon="check")
             except ValueError:
-                CTkMessagebox(title="Error", message="Please enter a valid number.", icon="cancel")
+                CTkMessagebox(title="Error", message="Invalid number.", icon="cancel")
 
     def __instantiate_transfer_popup(self):
         TransferPopUp(self)
