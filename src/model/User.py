@@ -29,22 +29,21 @@ class User():
         return lastrow
 
      #READ
-    def read(id :int):
-        pass
-
-    def get_id(self):
+    def read(self, id :int):
         cursor = self.__db.get_cursor()
         sql = """
-        SELECT id 
+        SELECT (firstname, lastname, email, is_admin)   
         FROM user
-        WHERE passwoed =%s and email=%s  
+        WHERE id = %s  
         """
-        cursor.execute(sql,(self.__lastname, self.__firstname, self.__email))
-        result_id = cursor.fetchone()
-        self.__db.connect.commit()
-        self.__db.close_c()
-        self.__db.close_db()
-        return result_id[0]
+        cursor.execute(sql,(id))
+        result = cursor.fetchone()
+        self.__firstname = result[0]
+        self.__lastname = result[1]
+        self.__email = result[2]
+        self.__is_admin = result[3]
+        self.__id = id
+        return self.__firstname, self.__lastname, self.__email, self.__is_admin
 
     # UPDATE
     def update_firstname(self, new_name :str, id:int):
