@@ -1,6 +1,6 @@
 #from src.model.User import User
 import mysql.connector
-import hashlib
+#import hashlib
 #import bcrypt
 class Database():
 
