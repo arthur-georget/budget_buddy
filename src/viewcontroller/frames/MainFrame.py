@@ -29,6 +29,7 @@ class MainFrame(ctk.CTkFrame):
 
         return self.__selected_bank_account
 
+
     def __ask_amount(self, operation_type : str):
 
         dialog = ctk.CTkInputDialog(text=f"How much money to {operation_type}?", title=operation_type.title())
@@ -55,9 +56,12 @@ class MainFrame(ctk.CTkFrame):
         self.__select_bank_account()
         print(f"MainFrame: {self.__user.get_email()}")
 
+
     def filter_action(self, event):
+
         index = int(self.__scrollable_bank_account_filter.get_selected_filter())
         self.__select_bank_account(index)
+
 
     def __select_bank_account(self, index:int = 0):
 
@@ -68,6 +72,7 @@ class MainFrame(ctk.CTkFrame):
 
 
     def __update_infos(self):
+
         indexes = []
         for i in range(len(self.__user.get_bank_accounts())):
             indexes.append(f"{i}")
