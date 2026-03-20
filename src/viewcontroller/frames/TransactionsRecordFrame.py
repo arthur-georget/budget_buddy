@@ -4,12 +4,17 @@ from src.viewcontroller.frames.ScrollableTransactionsRecordFrame import Scrollab
 from src.viewcontroller.frames.ScrollableFilterFrame import ScrollableFilterFrame
 
 class TransactionsRecordFrame(ctk.CTkFrame):
+<<<<<<< HEAD
 
     def __init__(self, parent, controller, user): 
 
+=======
+    def __init__(self, parent, controller, user): 
+
+        self.__user = user
+>>>>>>> bc83bdf20ed8d5209a0bc0b90b36eb79ac960243
         ctk.CTkFrame.__init__(self, parent)
         self.controller = controller
-        self.user = user
         
         label = ctk.CTkLabel(self, text="Transactions Record", font=("Arial", 12, "bold"))
         label.grid(row=0, column=1, padx=10, pady=10) 

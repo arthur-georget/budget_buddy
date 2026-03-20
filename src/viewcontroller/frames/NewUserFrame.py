@@ -2,9 +2,10 @@ import customtkinter as ctk
 
 class NewUserFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, user):
-        super().__init__(parent)
+        ctk.CTkFrame.__init__(self, parent)
+
         self.controller = controller
-        self.user = user
+        self.__user = user
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure((0, 5), weight=1)

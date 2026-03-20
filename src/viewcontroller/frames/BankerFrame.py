@@ -4,9 +4,10 @@ from .ScrollableUsersFrame import ScrollableUsersFrame
 
 class BankerFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, user):
-        super().__init__(parent)
+        ctk.CTkFrame.__init__(self, parent)
+
         self.controller = controller
-        self.user = user
+        self.__user = user
 
         self.label = ctk.CTkLabel(self, text="Banker Management Console", font=("Arial", 24, "bold"))
         self.label.pack(pady=20)
