@@ -1,7 +1,9 @@
+from src.model.DataBase import Database
+
 class Transaction:
     
     def __init__(self):
-        pass
+        self.__db = Database()
     
     
     def get_id(self):
@@ -31,10 +33,22 @@ class Transaction:
         pass
 
 
-    def read(self):
-        self.__id = 1
-        self.__account_id = 1
-        self.__type = "Withdraw"
-        self.__date = "18/03/2026"
-        self.__category = "Shopping"
-        self.__amount = -1245
+    def read(self, id: int):
+
+        cursor = self.__db.get_cursor()
+        sql = """
+        SELECT account_id, type, date, category, amount
+        FROM transaction
+        WHERE id = %s
+        """
+        cursor.execute(sql,(id,))
+        result = cursor.fetchone()
+        self.__id = id
+        self.__account_id = result[0]
+        self.__type = result[1]
+        self.__date = result[2]
+        self.__category = result[3]
+        self.__amount = result[4]
+
+        self.__db.close_c()
+        self.__db.close_db()

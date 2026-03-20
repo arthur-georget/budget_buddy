@@ -1,4 +1,6 @@
 from src.model.DataBase import Database
+import hashlib
+import secrets
 
 class User():
     def __init__(self):
@@ -17,7 +19,7 @@ class User():
         
         sql = """
         INSERT INTO user (firstname, lastname, email, password, is_admin)
-        VALUES (%s, %s, %s, %s, , %s)
+        VALUES (%s, %s, %s, %s, %s)
         """
         cursor.execute(sql,(self.__firstname, self.__lastname, self.__email, self.__password, self.__is_admin))
         self.__db.connect.commit()
@@ -29,23 +31,23 @@ class User():
         return lastrow
 
      #READ
-    def read(id :int):
-        pass
-
-    def get_id(self):
+    def read(self, id :int):
         cursor = self.__db.get_cursor()
         sql = """
-        SELECT id 
+        SELECT (firstname, lastname, email, is_admin)   
         FROM user
-        WHERE passwoed =%s and email=%s  
+        WHERE id = %s  
         """
-        cursor.execute(sql,(self.__lastname, self.__firstname, self.__email))
-        result_id = cursor.fetchone()
-        self.__db.connect.commit()
-        self.__db.close_c()
-        self.__db.close_db()
-        return result_id[0]
+        cursor.execute(sql,(id))
+        result = cursor.fetchone()
+        self.__firstname = result[0]
+        self.__lastname = result[1]
+        self.__email = result[2]
+        self.__is_admin = result[3]
+        self.__id = id
+        return [self.__id, self.__firstname, self.__lastname, self.__email, self.__is_admin] 
 
+### NEED TO BE REFACTOR ### 
     # UPDATE
     def update_firstname(self, new_name :str, id:int):
         cursor = self.__db.get_cursor()
@@ -85,7 +87,8 @@ class User():
         self.__db.close_c()
         self.__db.close_db()  
         return
-
+### NEED TO BE REFACTOR END ###
+ 
     def update_password(self, new_password:str):
         cursor = self.__db.get_cursor()
         # DON'T FORGET TO HASH PASSWORD
@@ -103,7 +106,7 @@ class User():
     
     #DELETE
     def delete(self, id):
-        #SUPPRESSION EN CASCADE A FAIRE
+        #SUPPR CASCADE !
         cursor = self.db.get_cursor()
         sql = "DELETE FROM user WHERE id=%s"
         cursor.execute(sql, (id,))

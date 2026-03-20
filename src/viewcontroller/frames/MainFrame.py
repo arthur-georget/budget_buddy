@@ -10,9 +10,11 @@ class MainFrame(ctk.CTkFrame):
         self.controller = controller
         self.user = user
 
-        self.__balance = 1250.0
-        self.__balance_history = [1100.0, 1250.0, 1150.0, 1300.0, 1250.0, 1400.0, 1350.0]
         self.__selected_account = BankAccount()
+        self.__selected_account.read(1)
+        self.__balance = self.__selected_account.get_balance()
+        self.__balance_history = [1100.0, 1250.0, 1150.0, 1300.0, 1250.0]
+        
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)
