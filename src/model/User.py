@@ -1,11 +1,10 @@
 from src.model.DataBase import Database
-import hashlib
-import secrets
+from src.model.BankAccount import BankAccount
 
 class User():
     def __init__(self):
         self.__db = Database()
-
+        self.__bank_account = BankAccount()
 
     def get_email(self):
         return self.__email
@@ -17,7 +16,7 @@ class User():
         self.__firstname = firstname
         self.__lastname = lastname
         self.__email = email
-        self.__password = password
+        self.__password = self.__db.hash_password(password)
         # open cursor 
         cursor = self.__db.get_cursor()
         
@@ -31,12 +30,18 @@ class User():
         
         # close cursor and database
         self.__db.close_c()
+        # need to instanciate bank_account with transaction and balance
+        self.__bank_account.create()
         self.__db.close_db()
         return lastrow
     
     def login(self, email, password):
-        id_user = self.__db.login(email, password)
-        self.read(id_user)
+        id_user = self.__db.login(password,email)
+        if isinstance(id_user,int):
+            self.read(id_user)
+            self.__bank_account(id_user)
+        else:
+            print(id_user)
 
      #READ
     def read(self, id:int):
@@ -53,6 +58,7 @@ class User():
         self.__email = result[2]
         self.__is_admin = result[3]
         self.__id = id
+        self.__bank_account.read(id)
         return [self.__id, self.__firstname, self.__lastname, self.__email, self.__is_admin] 
 
 ### NEED TO BE REFACTOR ### 
