@@ -6,6 +6,10 @@ class User():
     def __init__(self):
         self.__db = Database()
 
+
+    def get_email(self):
+        return self.__email
+
     #CREATE
     def create(self, is_admin:bool, firstname:str, lastname:str, email:str, password:str):
         # create self instance
@@ -38,11 +42,11 @@ class User():
     def read(self, id:int):
         cursor = self.__db.get_cursor()
         sql = """
-        SELECT (firstname, lastname, email, is_admin)   
+        SELECT firstname, lastname, email, is_admin
         FROM user
         WHERE id = %s  
         """
-        cursor.execute(sql,(id))
+        cursor.execute(sql,(id,))
         result = cursor.fetchone()
         self.__firstname = result[0]
         self.__lastname = result[1]

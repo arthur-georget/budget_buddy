@@ -1,16 +1,21 @@
 import customtkinter as ctk
+from src.model.User import User
 from src.model.Transaction import Transaction
 from src.viewcontroller.frames.ScrollableTransactionsRecordFrame import ScrollableTransactionsRecordFrame
 from src.viewcontroller.frames.ScrollableFilterFrame import ScrollableFilterFrame
 
+
 class TransactionsRecordFrame(ctk.CTkFrame):
 
-    def __init__(self, parent, controller): 
+
+    def __init__(self, parent, controller, user): 
 
         ctk.CTkFrame.__init__(self, parent)
+        self.controller = controller
+        self.__user = user
         
-        label = ctk.CTkLabel(self, text ="Transactions Record", font = ("Arial", 12, "bold"))
-        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
+        label = ctk.CTkLabel(self, text="Transactions Record", font=("Arial", 12, "bold"))
+        label.grid(row=0, column=1, padx=10, pady=10) 
  
         main_button = ctk.CTkButton(self, text ="Main menu",
         command = lambda : controller.show_frame("MainFrame"))
@@ -67,3 +72,8 @@ class TransactionsRecordFrame(ctk.CTkFrame):
         print(self.__scrollable_transaction_type_filter.get_selected_filter())
         print(self.__scrollable_start_date_filter.get_selected_filter())
         print(self.__scrollable_end_date_filter.get_selected_filter())
+
+
+    def set_user(self, user: User):
+        self.__user = user
+        print(f"TransactionsRecordFrame: {self.__user.get_email()}")

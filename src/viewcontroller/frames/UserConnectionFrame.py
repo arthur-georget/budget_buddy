@@ -1,10 +1,13 @@
 import customtkinter as ctk
+from src.model.User import User
 from CTkMessagebox import CTkMessagebox
 
 class UserConnectionFrame(ctk.CTkFrame):
-    def __init__(self, parent, controller): 
-        super().__init__(parent)
+    def __init__(self, parent, controller, user): 
+        ctk.CTkFrame.__init__(self, parent)
+
         self.controller = controller
+        self.__user = user
         
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure((0, 6), weight=1)
@@ -26,6 +29,11 @@ class UserConnectionFrame(ctk.CTkFrame):
 
     def login(self):
         if self.email_input.get() == "admin" and self.password_input.get() == "1234":
+            self.controller.show_frame("BankerFrame")
+        elif self.email_input.get() != "":
+            user = User()
+            user.read(1)
+            self.controller.set_user_in_frames(user)
             self.controller.show_frame("MainFrame")
         else:
             CTkMessagebox(title="Login Error", message="Invalid credentials.", icon="warning")

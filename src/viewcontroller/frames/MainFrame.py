@@ -1,16 +1,18 @@
 from src.model.BankAccount import BankAccount
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
+from src.model.User import User
 from src.viewcontroller.popups.TransferPopUp import TransferPopUp
 
 class MainFrame(ctk.CTkFrame):
-    def __init__(self, parent, controller): 
+    def __init__(self, parent, controller, user): 
         ctk.CTkFrame.__init__(self, parent)
-        self.controller = controller
 
-        self.__balance = 1250.0
-        self.__balance_history = [1100.0, 1250.0, 1150.0, 1300.0, 1250.0]
         self.__selected_account = BankAccount()
+        self.__selected_account.read(1)
+        self.__balance = self.__selected_account.get_balance()
+        self.__balance_history = [1100.0, 1250.0, 1150.0, 1300.0, 1250.0]
+        
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)
@@ -66,3 +68,8 @@ class MainFrame(ctk.CTkFrame):
 
     def __instantiate_transfer_popup(self):
         TransferPopUp(self)
+
+    
+    def set_user(self, user: User):
+        self.__user = user
+        print(f"MainFrame: {self.__user.get_email()}")
