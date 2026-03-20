@@ -5,7 +5,7 @@ from src.viewcontroller.frames.ScrollableFilterFrame import ScrollableFilterFram
 
 class TransactionsRecordFrame(ctk.CTkFrame):
 
-    def __init__(self, parent, controller): 
+    def __init__(self, parent, controller, user): 
 
         ctk.CTkFrame.__init__(self, parent)
         self.controller = controller
