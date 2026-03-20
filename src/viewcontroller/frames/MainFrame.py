@@ -7,12 +7,6 @@ class MainFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, user): 
         ctk.CTkFrame.__init__(self, parent)
 
-<<<<<<< HEAD
-=======
-        self.controller = controller
-        self.__user = user
-        
->>>>>>> bc83bdf20ed8d5209a0bc0b90b36eb79ac960243
         self.__selected_account = BankAccount()
         self.__selected_account.read(1)
         self.__balance = self.__selected_account.get_balance()
