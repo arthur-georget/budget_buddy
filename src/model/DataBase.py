@@ -1,6 +1,7 @@
 #from src.model.User import User
 import mysql.connector
-import hashlib
+import bcrypt
+
 #import bcrypt
 class Database():
 
@@ -25,33 +26,41 @@ class Database():
     def get_cursor(self):
         return self.__cursor_o()
     
-    #def check_login_password(self, email,password):
-    #    #IN PROGRESS
-    #    cursor = self.get_cursor()
-    #    hashlib.sha
-    #    h_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-    #    sql = """
-    #    SELECT id 
-    #    FROM user
-    #    WHERE email=%s  
-    #    """
-
-
-
-    #def login(self, password, email):
-    #    #IN PROGRESS
-    #    # verify_password method
-    #    # verify login password
-    #    cursor = self.get_cursor()
-    #    sql = """
-    #    SELECT id 
-    #    FROM user
-    #    WHERE password =%s AND email=%s  
-    #    """
-    #    cursor.execute(sql,(password, email))
-    #    result_select = cursor.fetchone()
-    #    self.close_c()
-    #    instance_user = User()
-    #    instance_user.read(result_select[0])
-    #    self.close_db()
-    #    return instance_user
+    def hash_password(self,password):
+        hash_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+        return hash_pw
+    
+    def __find_hashe_pw(self,email):
+        cursor = self.get_cursor()
+        sql = """
+        SELECT password 
+        FROM user
+        WHERE email=%s  
+        """
+        cursor.execute(sql,(email,))
+        result = cursor.fetchone()
+        self.close_c()
+        return result[0]
+    
+    def verify_bcript_pw(self,password,email):
+        hash_stock = self.__find_hashe_pw(email)
+        verify_pw = bcrypt.checkpw(password.encode(),hash_stock.encode())
+        return verify_pw, hash_stock
+        
+    def login(self, password, email):
+        hashes = self.verify_bcript_pw(password,email)
+        cursor = self.get_cursor()
+        if hashes[0] == True:
+            sql = """
+            SELECT id 
+            FROM user
+            WHERE password =%s AND email=%s  
+            """
+            cursor.execute(sql,(hashes[1], email))
+            result_select = cursor.fetchone()
+            self.close_c()
+            instance_user = result_select[0]
+            self.close_db()
+            return instance_user
+        else:
+            return "Sorry, your email or password is incorrect."

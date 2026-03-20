@@ -29,9 +29,13 @@ class User():
         self.__db.close_c()
         self.__db.close_db()
         return lastrow
+    
+    def login(self, email, password):
+        id_user = self.__db.login(email, password)
+        self.read(id_user)
 
      #READ
-    def read(self, id :int):
+    def read(self, id:int):
         cursor = self.__db.get_cursor()
         sql = """
         SELECT (firstname, lastname, email, is_admin)   
@@ -49,14 +53,14 @@ class User():
 
 ### NEED TO BE REFACTOR ### 
     # UPDATE
-    def update_firstname(self, new_name :str, id:int):
+    def update_firstname(self, new_name :str):
         cursor = self.__db.get_cursor()
         sql = """
         UPDATE user
         SET firstname =%s
         WHERE id = %s
         """
-        cursor.execute(sql,(new_name,id))
+        cursor.execute(sql,(new_name,self.__id))
         self.__db.connect.commit()
         self.__db.close_c()
         self.__db.close_db()  
@@ -92,13 +96,14 @@ class User():
     def update_password(self, new_password:str):
         cursor = self.__db.get_cursor()
         # DON'T FORGET TO HASH PASSWORD
-        
+        self.__db.__hash(new_password)
+
         sql = """
         UPDATE user
         SET password =%s
         WHERE id = %s
         """
-        cursor.execute(sql,(new_password,id))
+        cursor.execute(sql,(new_password,self.__id))
         self.__db.connect.commit()
         self.__db.close_c()
         self.__db.close_db()  
