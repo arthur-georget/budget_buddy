@@ -8,12 +8,6 @@ class MainFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, user): 
         ctk.CTkFrame.__init__(self, parent)
 
-        self.__selected_account = BankAccount()
-        self.__selected_account.read(1)
-        self.__balance = self.__selected_account.get_balance()
-        self.__balance_history = [1100.0, 1250.0, 1150.0, 1300.0, 1250.0]
-        
-
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)
         self.grid_rowconfigure(1, weight=1)
@@ -35,23 +29,9 @@ class MainFrame(ctk.CTkFrame):
             btn = ctk.CTkButton(self.left_menu, text=text, command=cmd, width=220, height=45, font=("Arial", 13, "bold"))
             btn.pack(pady=15)
 
-        self.dashboard_frame = ctk.CTkFrame(self, fg_color=("#DBEAFE", "#2D2D2D"), corner_radius=20)
-        self.dashboard_frame.grid(row=0, column=1, rowspan=2, padx=30, pady=30, sticky="nsew")
-
-        ctk.CTkLabel(self.dashboard_frame, text="Solde Actuel", font=("Arial", 16, "bold"), text_color=("#1e40af", "#93c5fd")).pack(pady=(40, 5))
-        
-        self.balance_label = ctk.CTkLabel(self.dashboard_frame, text=f"{self.__balance:,.1f} €", font=("Arial", 48, "bold"), text_color=("#1A56DB", "#60a5fa"))
-        self.balance_label.pack(pady=10)
-
-        ctk.CTkLabel(self.dashboard_frame, text="Dépenses Mensuelles", font=("Arial", 14, "bold"), text_color=("#1e40af", "#93c5fd")).pack(pady=(40, 10))
-        
-        self.chart_card = ctk.CTkFrame(self.dashboard_frame, fg_color=("#FFFFFF", "#3D3D3D"), corner_radius=15)
-        self.chart_card.pack(padx=30, pady=20, fill="both", expand=True)
-        
-        ctk.CTkLabel(self.chart_card, text="[ Graphique Linéaire ]", font=("Arial", 12, "italic"), text_color="gray").place(relx=0.5, rely=0.5, anchor="center")
 
     def get_selected_account(self):
-        return self.__selected_account
+        return self.__selected_bank_account
 
     def __ask_amount(self, operation_type : str):
         dialog = ctk.CTkInputDialog(text=f"How much money to {operation_type}?", title=operation_type.title())
@@ -72,4 +52,30 @@ class MainFrame(ctk.CTkFrame):
     
     def set_user(self, user: User):
         self.__user = user
+        self.__select_bank_account()
+        self.__update_infos()
         print(f"MainFrame: {self.__user.get_email()}")
+
+
+    def __select_bank_account(self):
+        self.__selected_bank_account = self.__user.get_bank_accounts()[0]
+        self.__balance = self.__selected_bank_account.get_balance()
+        self.__balance_history = [1100.0, 1250.0, 1150.0, 1300.0, 1250.0]
+
+
+    def __update_infos(self):
+
+        self.dashboard_frame = ctk.CTkFrame(self, fg_color=("#DBEAFE", "#2D2D2D"), corner_radius=20)
+        self.dashboard_frame.grid(row=0, column=1, rowspan=2, padx=30, pady=30, sticky="nsew")
+
+        ctk.CTkLabel(self.dashboard_frame, text="Balance", font=("Arial", 16, "bold"), text_color=("#1e40af", "#93c5fd")).pack(pady=(40, 5))
+        
+        self.balance_label = ctk.CTkLabel(self.dashboard_frame, text=f"{self.__balance:,.1f} €", font=("Arial", 48, "bold"), text_color=("#1A56DB", "#60a5fa"))
+        self.balance_label.pack(pady=10)
+
+        ctk.CTkLabel(self.dashboard_frame, text="Monthly expenses", font=("Arial", 14, "bold"), text_color=("#1e40af", "#93c5fd")).pack(pady=(40, 10))
+        
+        self.chart_card = ctk.CTkFrame(self.dashboard_frame, fg_color=("#FFFFFF", "#3D3D3D"), corner_radius=15)
+        self.chart_card.pack(padx=30, pady=20, fill="both", expand=True)
+        
+        ctk.CTkLabel(self.chart_card, text="[ Linear chart ]", font=("Arial", 12, "italic"), text_color="gray").place(relx=0.5, rely=0.5, anchor="center")
