@@ -8,15 +8,20 @@ class TransferPopUp(ctk.CTkToplevel):
         self.title("Secure Transfer")
         self.geometry("400x480")
         self.resizable(False, False)
+        
         self.account = parent.get_selected_account()
         
+        self.withdraw()
+        self.after(200, self._show_window)
+        
         self.grid_columnconfigure(0, weight=1)
-        self.after(10, self._set_modal)
         self._setup_ui()
 
-    def _set_modal(self):
+    def _show_window(self):
+        self.deiconify()
         self.grab_set()
         self.focus_force()
+        self.attributes("-topmost", True)
 
     def _setup_ui(self):
         ctk.CTkLabel(self, text="NEW TRANSFER", font=("Arial", 20, "bold")).grid(row=0, pady=(30, 20))
@@ -46,8 +51,6 @@ class TransferPopUp(ctk.CTkToplevel):
         try:
             amount = float(amount_s)
             if amount <= 0: return False, "Amount must be positive."
-            if hasattr(self.account, 'balance') and amount > self.account.balance:
-                return False, "Insufficient funds."
         except ValueError:
             return False, "Please enter a valid number."
 
@@ -60,5 +63,4 @@ class TransferPopUp(ctk.CTkToplevel):
             return
 
         msg_box = CTkMessagebox(title="Success", message="Transfer successful!", icon="check")
-        if msg_box.get() == "OK":
-            self.destroy()
+        self.destroy()
