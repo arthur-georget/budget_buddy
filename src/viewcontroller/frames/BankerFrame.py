@@ -1,8 +1,10 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
-from .ScrollableUsersFrame import ScrollableUsersFrame
+from src.model.User import User
+from src.viewcontroller.frames.ScrollableUsersFrame import ScrollableUsersFrame
 
 class BankerFrame(ctk.CTkFrame):
+
     def __init__(self, parent, controller, user):
         ctk.CTkFrame.__init__(self, parent)
 
@@ -54,3 +56,7 @@ class BankerFrame(ctk.CTkFrame):
         )
         if msg.get() == "Delete":
             CTkMessagebox(title="Deleted", message="Account removed.", icon="info")
+
+    def set_user(self, user: User):
+        self.__user = user
+        print(f"BankerFrame: {self.__user.get_email()}")

@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from src.model.User import User
 from src.viewcontroller.frames.UserConnectionFrame import UserConnectionFrame
 from src.viewcontroller.frames.NewUserFrame import NewUserFrame
 from src.viewcontroller.frames.MainFrame import MainFrame
@@ -39,6 +40,12 @@ class App(ctk.CTk):
     def show_frame(self, frame_class_name : str):
         frame = self.frames[frame_class_name]
         frame.tkraise()
+
+    def set_user_in_frames(self, user: User):
+        for frame in self.frames.values():
+            if frame.__class__ in [MainFrame, TransactionsRecordFrame, BankerFrame]:
+                frame.set_user(user)
+
 
 if __name__ == "__main__":
     app = App()

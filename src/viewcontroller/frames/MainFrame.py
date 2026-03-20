@@ -1,6 +1,7 @@
 from src.model.BankAccount import BankAccount
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
+from src.model.User import User
 from src.viewcontroller.popups.TransferPopUp import TransferPopUp
 
 class MainFrame(ctk.CTkFrame):
@@ -67,3 +68,8 @@ class MainFrame(ctk.CTkFrame):
 
     def __instantiate_transfer_popup(self):
         TransferPopUp(self)
+
+    
+    def set_user(self, user: User):
+        self.__user = user
+        print(f"MainFrame: {self.__user.get_email()}")
