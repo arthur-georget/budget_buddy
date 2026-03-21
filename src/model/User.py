@@ -39,6 +39,7 @@ class User():
         # need to instanciate bank_account with transaction and balance
         self.__bank_accounts = [BankAccount()]
         self.__bank_accounts[0].create()
+        self.selected_bank_account_index = 0
         self.__db.close_db()
         return lastrow
     
@@ -66,6 +67,7 @@ class User():
         self.__is_admin = result[3]
         self.__id = id
         self.__instantiate_bank_accounts()
+        self.selected_bank_account_index = 0
         return [self.__id, self.__firstname, self.__lastname, self.__email, self.__is_admin, self.__bank_accounts] 
 
 ### NEED TO BE REFACTORED ###

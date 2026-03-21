@@ -17,13 +17,11 @@ class ScrollableFilterFrame(ctk.CTkScrollableFrame):
             self.__radio_var = ctk.StringVar(value="")
             for i,filter in enumerate(filters):
                 filter_button = ctk.CTkRadioButton(self, text=filter, variable= self.__radio_var, value=filter)
-                filter_button.grid(row=i+1, column=0, sticky="W", pady=5)
+                filter_button.grid(row=i, column=0, sticky="W", pady=5)
         else:        
-            all_filter_button = ctk.CTkButton(self, text='Tous', command= partial(self.__filter_action,None), width=20)
-            all_filter_button.grid(row=0, column=0, sticky="W", pady=5)
             for i,filter in enumerate(filters):
                 filter_button = ctk.CTkButton(self, text=filter, command= partial(self.__filter_action,filter), width=20)
-                filter_button.grid(row=i+1, column=0, sticky="W", pady=5)
+                filter_button.grid(row=i, column=0, sticky="W", pady=5)
             
         self.__selected_filter = None
 

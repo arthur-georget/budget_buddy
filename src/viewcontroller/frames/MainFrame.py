@@ -59,13 +59,13 @@ class MainFrame(ctk.CTkFrame):
 
     def filter_action(self, event):
 
-        index = int(self.__scrollable_bank_account_filter.get_selected_filter())
-        self.__select_bank_account(index)
+        self.__user.selected_bank_account_index = int(self.__scrollable_bank_account_filter.get_selected_filter())
+        self.__select_bank_account()
 
 
-    def __select_bank_account(self, index:int = 0):
+    def __select_bank_account(self):
 
-        self.__selected_bank_account = self.__user.get_bank_accounts()[index]
+        self.__selected_bank_account = self.__user.get_bank_accounts()[self.__user.selected_bank_account_index]
         self.__balance = self.__selected_bank_account.get_balance()
         self.__update_infos()
         self.__balance_history = [1100.0, 1250.0, 1150.0, 1300.0, 1250.0]

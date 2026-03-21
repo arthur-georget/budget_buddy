@@ -61,7 +61,7 @@ class TransactionsRecordFrame(ctk.CTkFrame):
         command = self.__filter_transactions)
         filter_by_date_range_button.grid(row = 1, column = 7, padx = 10, pady = 10)
 
-        scrollable_transactions = ScrollableTransactionsRecordFrame(self, transactions, width=500)
+        scrollable_transactions = ScrollableTransactionsRecordFrame(self, transactions, height=500, width=730)
         scrollable_transactions.grid(row = 2, column = 3, columnspan = 5, padx = 10, pady = 10)
 
 
