@@ -24,6 +24,17 @@ class MainFrame(ctk.CTkFrame):
         self.left_menu = ctk.CTkFrame(self, fg_color="transparent")
         self.left_menu.grid(row=1, column=0, sticky="n", padx=30)
 
+        buttons = [
+            ("Transactions record", lambda: self.__controller.show_frame("TransactionsRecordFrame")),
+            ("Withdraw", lambda: self.__ask_amount("withdraw")),
+            ("Deposit", lambda: self.__ask_amount("deposit")),
+            ("Transfer", self.__instantiate_transfer_popup)
+        ]
+
+        for text, cmd in buttons:
+            btn = ctk.CTkButton(self.left_menu, text=text, command=cmd, width=220, height=45, font=("Arial", 13, "bold"))
+            btn.pack(pady=15)
+
 
     def get_selected_account(self):
 
@@ -79,16 +90,7 @@ class MainFrame(ctk.CTkFrame):
         self.__scrollable_bank_account_filter = ScrollableFilterFrame(self, indexes, "Accounts available", height = 60)
         self.__scrollable_bank_account_filter.grid(row= 2, column = 0, pady=20)
 
-        buttons = [
-            ("Transactions record", lambda: self.__controller.show_frame("TransactionsRecordFrame")),
-            ("Withdraw", lambda: self.__ask_amount("withdraw")),
-            ("Deposit", lambda: self.__ask_amount("deposit")),
-            ("Transfer", self.__instantiate_transfer_popup)
-        ]
-
-        for text, cmd in buttons:
-            btn = ctk.CTkButton(self.left_menu, text=text, command=cmd, width=220, height=45, font=("Arial", 13, "bold"))
-            btn.pack(pady=15)
+        
 
         self.__dashboard_frame = ctk.CTkFrame(self, fg_color=("#DBEAFE", "#2D2D2D"), corner_radius=20)
         self.__dashboard_frame.grid(row=0, column=1, rowspan=2, padx=30, pady=30, sticky="nsew")
