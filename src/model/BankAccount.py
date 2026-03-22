@@ -1,4 +1,5 @@
 from src.model.DataBase import Database
+from src.model.Transaction import Transaction
 
 class BankAccount:
 
@@ -14,8 +15,25 @@ class BankAccount:
         return self.__balance
     
 
-    def create(self):
-        pass
+    def get_transactions(self):
+        return self.__transactions
+
+
+    def create(self, id_user:int, balance = 0):
+        
+        self.__balance = balance
+        self.__transactions = []
+
+        cursor = self.__db.get_cursor()
+        sql = """ INSERT INTO bank_account (id, balance)
+        VALUES (%s, %s)
+        """
+        cursor.execute(sql,(id_user, balance))
+        self.__db.connect.commit()
+        lastrow = cursor.lastrowid
+        self.__db.close_c()
+        self.__db.close_db()
+        return lastrow
 
 
     def read(self, id: int):
@@ -30,6 +48,23 @@ class BankAccount:
         result = cursor.fetchone()
         self.__id = id
         self.__balance = result[0]
+        self.__instantiate_transactions()
+
+        self.__db.close_c()
+        self.__db.close_db()
+
+
+    def read_with_transaction(self, id_user):
+        cursor = self.__db.get_cursor()
+        sql = """
+        SELECT balance, transaction
+        FROM bank_account
+        WHERE id = %s
+        """
+        cursor.execute(sql,(id_user,))
+        result = cursor.fetchone()
+        self.__id = id
+        self.__balance = result[0]
 
         self.__db.close_c()
         self.__db.close_db()
@@ -41,3 +76,21 @@ class BankAccount:
 
     def delete(self):
         pass
+
+
+    def __instantiate_transactions(self):
+
+        self.__transactions = []
+        cursor = self.__db.get_cursor()
+        sql = """
+        SELECT id
+        FROM transaction
+        WHERE account_id = %s  
+        """
+        cursor.execute(sql,(self.__id,))
+        results = cursor.fetchall()
+
+        for result in results:
+            transaction = Transaction()
+            transaction.read(result[0])
+            self.__transactions.append(transaction)
