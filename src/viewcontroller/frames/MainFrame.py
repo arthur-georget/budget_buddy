@@ -49,6 +49,8 @@ class MainFrame(ctk.CTkFrame):
             try:
                 amount = float(user_input)
                 if amount > 0:
+                    self.__selected_bank_account.new_transaction(operation_type, "miscellaneous", amount)
+                    self.__selected_bank_account.update_balance(operation_type, amount)
                     CTkMessagebox(title="Success", message=f"{amount}€ {operation_type} successful.", icon="check")
                 else:
                     CTkMessagebox(title="Error", message="Amount must be positive.", icon="warning")

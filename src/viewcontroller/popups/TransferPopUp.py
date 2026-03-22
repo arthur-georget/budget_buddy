@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
+from src.model.BankAccount import BankAccount
 
 class TransferPopUp(ctk.CTkToplevel):
     def __init__(self, parent):
@@ -9,7 +10,7 @@ class TransferPopUp(ctk.CTkToplevel):
         self.geometry("400x480")
         self.resizable(False, False)
         
-        self.account = parent.get_selected_account()
+        self.__selected_bank_account = parent.get_selected_account()
         
         self.withdraw()
         self.after(200, self._show_window)
@@ -42,15 +43,16 @@ class TransferPopUp(ctk.CTkToplevel):
                       width=300, height=40, command=self.destroy).grid(row=5, pady=10)
 
     def verify_inputs(self):
-        target = self.target_input.get().strip()
+        target_account_id_s = self.target_input.get().strip()
         amount_s = self.amount_input.get().strip()
 
-        if not target or not amount_s:
+        if not target_account_id_s or not amount_s:
             return False, "All fields are required."
         
         try:
-            amount = float(amount_s)
-            if amount <= 0: return False, "Amount must be positive."
+            self.__amount = float(amount_s)
+            self.__target_account_id = int(target_account_id_s)
+            if self.__amount <= 0: return False, "Amount must be positive."
         except ValueError:
             return False, "Please enter a valid number."
 
@@ -62,5 +64,12 @@ class TransferPopUp(ctk.CTkToplevel):
             self.error_label.configure(text=msg)
             return
 
-        msg_box = CTkMessagebox(title="Success", message="Transfer successful!", icon="check")
+        self.__selected_bank_account.new_transaction("withdraw", f"Transfer to account {self.__target_account_id}", self.__amount)
+        self.__selected_bank_account.update_balance("withdraw", self.__amount)
+        target_bank_account = BankAccount()
+        target_bank_account.read(self.__target_account_id)
+        target_bank_account.new_transaction("deposit", f"Transfer from account {self.__selected_bank_account.get_id()}", self.__amount)
+        target_bank_account.update_balance("deposit", self.__amount)
+
+        CTkMessagebox(title="Success", message="Transfer successful!", icon="check")
         self.destroy()

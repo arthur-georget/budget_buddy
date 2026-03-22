@@ -1,5 +1,6 @@
 from src.model.DataBase import Database
 from src.model.Transaction import Transaction
+from decimal import Decimal
 
 class BankAccount:
 
@@ -69,8 +70,25 @@ class BankAccount:
 
 
 
-    def update(self):
-        pass
+    def update_balance(self, operation_type: str, amount: float):
+        
+        if operation_type == "withdraw":
+            self.__balance -= Decimal(amount)
+            
+        elif operation_type == "deposit":
+            self.__balance += Decimal(amount)
+
+        cursor = self.__db.get_cursor()
+        
+        sql = """
+        UPDATE bank_account
+        SET balance = %s 
+        WHERE id = %s
+        """
+
+        cursor.execute(sql,(self.__balance,self.__id))
+        self.__db.connect.commit()
+        cursor.close()
 
 
     def delete(self):
