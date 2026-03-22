@@ -28,12 +28,16 @@ class UserConnectionFrame(ctk.CTkFrame):
                       command=lambda: controller.show_frame("NewUserFrame")).grid(row=6, sticky="n")
 
     def login(self):
-        if self.email_input.get() == "admin" and self.password_input.get() == "1234":
+        email = self.email_input.get()
+        password = self.password_input.get()
+        user = User()
+        result = user.login(password, email)
+        if isinstance(result, User) and result.__is_admin == 'True':
             self.controller.show_frame("BankerFrame")
-        elif self.email_input.get() != "":
-            user = User()
-            user.read(1)
-            self.controller.set_user_in_frames(user)
+        elif isinstance(result, User):
+            #user = User()
+            #user.read(1)
+            self.controller.set_user_in_frames(result)
             self.controller.show_frame("MainFrame")
         else:
             CTkMessagebox(title="Login Error", message="Invalid credentials.", icon="warning")
