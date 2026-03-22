@@ -50,5 +50,5 @@ class Transaction:
         self.__category = result[3]
         self.__amount = result[4]
 
-        self.__db.close_c()
+        cursor.close()
         self.__db.close_db()
