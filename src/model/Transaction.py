@@ -1,3 +1,4 @@
+import datetime
 from src.model.DataBase import Database
 
 class Transaction:
@@ -29,8 +30,30 @@ class Transaction:
     def get_amount(self):
         return self.__amount
 
-    def create(self):
-        pass
+    def create(self, account_id: int, transaction_type: str, category: str, amount: float):
+        
+        self.__account_id = account_id
+        self.__type = transaction_type
+        self.__date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.__category = category
+        self.__amount = amount
+
+        cursor = self.__db.get_cursor()
+
+        sql = """
+        INSERT INTO transaction (account_id, type, date, category, amount)
+        VALUES (%s, %s, %s, %s, %s)
+        """
+        cursor.execute(sql,(
+            self.__account_id, 
+            self.__type, 
+            self.__date, 
+            self.__category, 
+            self.__amount))
+
+        self.__db.connect.commit()
+        self.__id = cursor.lastrowid
+        cursor.close
 
 
     def read(self, id: int):
