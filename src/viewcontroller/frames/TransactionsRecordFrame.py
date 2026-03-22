@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import datetime
 from src.model.User import User
 from src.model.Transaction import Transaction
 from src.viewcontroller.frames.ScrollableTransactionsRecordFrame import ScrollableTransactionsRecordFrame
@@ -12,7 +13,6 @@ class TransactionsRecordFrame(ctk.CTkFrame):
 
         ctk.CTkFrame.__init__(self, parent)
         self.controller = controller
-        self.__user = user
         
         label = ctk.CTkLabel(self, text="Transactions Record", font=("Arial", 12, "bold"))
         label.grid(row=0, column=1, padx=10, pady=10) 
@@ -20,18 +20,31 @@ class TransactionsRecordFrame(ctk.CTkFrame):
         main_button = ctk.CTkButton(self, text ="Main menu",
         command = lambda : controller.show_frame("MainFrame"))
         main_button.grid(row = 1, column = 1, padx = 10, pady = 10)
-  
-        transactions = []
-        for i in range(1,101):
-            transaction = Transaction()
-            transaction.read(i)
-            transactions.append(transaction)
+
+
+
+
+    def set_user(self, user: User):
+
+        self.__user = user
+        self.__init_frame_content()
+        print(f"TransactionsRecordFrame: {self.__user.get_email()}")
+
+
+    def __init_frame_content(self):
+
+        self.__transactions = self.__user.get_bank_accounts()[self.__user.selected_bank_account_index].get_transactions()
+        self.__build_filters()
+        self.__build_transactions_frame()
+
+
+    def __build_filters(self):
 
         categories = []
         transaction_types = []
         dates = []
 
-        for transaction in transactions:
+        for transaction in self.__transactions:
 
             category = transaction.get_category()
             if category not in categories:
@@ -61,6 +74,27 @@ class TransactionsRecordFrame(ctk.CTkFrame):
         command = self.__filter_transactions)
         filter_by_date_range_button.grid(row = 1, column = 7, padx = 10, pady = 10)
 
+
+    def __build_transactions_frame(self):
+
+        category_filter = self.__scrollable_category_filter.get_selected_filter()
+        transaction_type_filter = self.__scrollable_transaction_type_filter.get_selected_filter()
+        start_date_filter = self.__str_to_datetime(self.__scrollable_start_date_filter.get_selected_filter())
+        end_date_filter = self.__str_to_datetime(self.__scrollable_end_date_filter.get_selected_filter())
+        
+        transactions = []
+
+        for transaction in self.__transactions:
+            transactions.append(transaction)
+
+        for i in range(len(transactions)-1,0,-1):
+            if ((category_filter != "" and transactions[i].get_category() != category_filter) or
+                (transaction_type_filter != "" and transactions[i].get_type() != transaction_type_filter) or
+                (start_date_filter != "" and transactions[i].get_date() < start_date_filter) or
+                (end_date_filter != "" and  transactions[i].get_date() > end_date_filter)):
+                transactions.pop(i)
+            
+
         scrollable_transactions = ScrollableTransactionsRecordFrame(self, transactions, height=500, width=730)
         scrollable_transactions.grid(row = 2, column = 3, columnspan = 5, padx = 10, pady = 10)
 
@@ -72,8 +106,13 @@ class TransactionsRecordFrame(ctk.CTkFrame):
         print(self.__scrollable_transaction_type_filter.get_selected_filter())
         print(self.__scrollable_start_date_filter.get_selected_filter())
         print(self.__scrollable_end_date_filter.get_selected_filter())
+        self.__build_transactions_frame()
 
 
-    def set_user(self, user: User):
-        self.__user = user
-        print(f"TransactionsRecordFrame: {self.__user.get_email()}")
+    def __str_to_datetime(self, str_to_convert: str):
+        if str_to_convert == "":
+            return ""
+        else:
+            format = '%Y-%m-%d %H:%M:%S'
+            converted_datetime = datetime.datetime.strptime(str_to_convert, format)
+            return converted_datetime

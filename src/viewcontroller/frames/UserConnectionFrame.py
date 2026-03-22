@@ -33,7 +33,8 @@ class UserConnectionFrame(ctk.CTkFrame):
         elif self.email_input.get() != "":
             user = User()
             user.read(1)
-            self.controller.set_user_in_frames(user)
+            self.controller.current_user = user
+            self.controller.set_user_in_frames()
             self.controller.show_frame("MainFrame")
         else:
             CTkMessagebox(title="Login Error", message="Invalid credentials.", icon="warning")

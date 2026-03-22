@@ -37,14 +37,20 @@ class App(ctk.CTk):
         
         self.show_frame("UserConnectionFrame")
 
+        self.bind('<FocusIn>', self.set_user_in_frames)
+
     def show_frame(self, frame_class_name : str):
+
         frame = self.frames[frame_class_name]
         frame.tkraise()
+        frame.focus_set()
 
-    def set_user_in_frames(self, user: User):
-        for frame in self.frames.values():
-            if frame.__class__ in [MainFrame, TransactionsRecordFrame, BankerFrame]:
-                frame.set_user(user)
+    def set_user_in_frames(self, event = None):
+
+        if self.current_user is not None:    
+            for frame in self.frames.values():
+                if frame.__class__ in [MainFrame, TransactionsRecordFrame, BankerFrame]:
+                    frame.set_user(self.current_user)
 
 
 if __name__ == "__main__":

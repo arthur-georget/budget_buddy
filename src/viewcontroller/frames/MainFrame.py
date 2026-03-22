@@ -75,7 +75,7 @@ class MainFrame(ctk.CTkFrame):
 
 
     def __select_bank_account(self):
-
+        
         self.__selected_bank_account = self.__user.get_bank_accounts()[self.__user.selected_bank_account_index]
         self.__balance = self.__selected_bank_account.get_balance()
         self.__update_infos()
