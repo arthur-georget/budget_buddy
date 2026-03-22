@@ -1,36 +1,30 @@
-#from src.model.User import User
 import mysql.connector
 import bcrypt
 
-#import bcrypt
 class Database():
-
     def __init__(self):
+        self.connect = None
+        self.__connect_db()
+    
+    def __connect_db(self):
         self.connect = mysql.connector.connect(
             host = "localhost",
             user = "u_bank_admin",
             password = "password",
-            database = "db_bank"
-        )
+            database = "db_bank")
         
-    def __cursor_o(self):
-        self.cursor = self.connect.cursor()
-        return self.cursor
-
-    def close_c(self):
-        self.cursor.close()
+    def get_cursor(self):
+        self.__connect_db()
+        return self.connect.cursor()
 
     def close_db(self):
-        self.connect.close()
-
-    def get_cursor(self):
-        return self.__cursor_o()
+        if self.connect and self.connect.is_connected():
+            self.connect.close()
     
     def hash_password(self,password):
-        hash_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-        return hash_pw
+        return bcrypt.hashpw(password.encode(), bcrypt.gensalt())
     
-    def __find_hashe_pw(self,email):
+    def __verify_bcript_pw(self,password,email):
         cursor = self.get_cursor()
         sql = """
         SELECT password 
@@ -39,28 +33,24 @@ class Database():
         """
         cursor.execute(sql,(email,))
         result = cursor.fetchone()
-        self.close_c()
-        return result[0]
-    
-    def verify_bcript_pw(self,password,email):
-        hash_stock = self.__find_hashe_pw(email)
-        verify_pw = bcrypt.checkpw(password.encode(),hash_stock.encode())
-        return verify_pw, hash_stock
-        
-    def login(self, password, email):
-        hashes = self.verify_bcript_pw(password,email)
-        cursor = self.get_cursor()
-        if hashes[0] == True:
-            sql = """
-            SELECT id 
-            FROM user
-            WHERE password =%s AND email=%s  
-            """
-            cursor.execute(sql,(hashes[1], email))
-            result_select = cursor.fetchone()
-            self.close_c()
-            instance_user = result_select[0]
-            self.close_db()
-            return instance_user
+        cursor.close()
+        if result is None:
+            return False, None
         else:
+            stored_hash = result[0]
+            ok = bcrypt.checkpw(password.encode(), stored_hash.encode())
+            return ok, stored_hash
+      
+    def login(self, password, email):
+        ok, stored_hash = self.__verify_bcript_pw(password, email)
+        if ok == False:
             return "Sorry, your email or password is incorrect."
+        else:
+            cursor = self.get_cursor()
+            sql ="""SELECT id
+                           FROM user
+                           WHERE email = %s AND password =%s"""
+            cursor.execute(sql, (email, stored_hash))
+            result = cursor.fetchone()
+            cursor.close()
+            return result[0]

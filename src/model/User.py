@@ -5,53 +5,72 @@ class User():
 
     def __init__(self):
         self.__db = Database()
-        
+        self.__id = None
+        self.__firstname = None
+        self.__lastname = None
+        self.__email = None
+        self.__is_admin = None
+        self.__bank_accounts = []
 
+    # GETTERS
     def get_email(self):
         return self.__email
 
+    def get_all_email(self):
+        cursor = self.__db.get_cursor()
+        sql = ("SELECT email FROM user")
 
     def get_bank_accounts(self):
         return self.__bank_accounts
     
+    def get_is_admin(self):
+        return self.__is_admin
 
     #CREATE
-    def create(self, is_admin:bool, firstname:str, lastname:str, email:str, password:str):
+    def create(self, firstname:str, lastname:str, email:str, password:str, is_admin = 'False'):
+        try:
         # create self instance
-        self.__is_admin = is_admin
-        self.__firstname = firstname
-        self.__lastname = lastname
-        self.__email = email
-        self.__password = self.__db.hash_password(password)
-        # open cursor 
-        cursor = self.__db.get_cursor()
-        
-        sql = """
-        INSERT INTO user (firstname, lastname, email, password, is_admin)
-        VALUES (%s, %s, %s, %s, %s)
-        """
-        cursor.execute(sql,(self.__firstname, self.__lastname, self.__email, self.__password, self.__is_admin))
-        self.__db.connect.commit()
-        lastrow = cursor.lastrowid
-        
-        # close cursor and database
-        self.__db.close_c()
-        # need to instanciate bank_account with transaction and balance
-        self.__bank_accounts = [BankAccount()]
-        self.__bank_accounts[0].create()
-        self.selected_bank_account_index = 0
-        self.__db.close_db()
-        return lastrow
+            self.__is_admin = is_admin
+            self.__firstname = firstname
+            self.__lastname = lastname
+            self.__email = email
+            self.__password = self.__db.hash_password(password)
+
+            cursor = self.__db.get_cursor()
+
+            sql = """
+            INSERT INTO user (firstname, lastname, email, password, is_admin)
+            VALUES (%s, %s, %s, %s, %s)
+            """
+            cursor.execute(sql,(
+                self.__firstname, 
+                self.__lastname, 
+                self.__email, 
+                self.__password, 
+                self.__is_admin))
+
+            self.__db.connect.commit()
+            self.__id = cursor.lastrowid
+            cursor.close
+
+            bank_account = BankAccount()
+            bank_account.create()
+            self.__bank_accounts =[bank_account]
+            return self.__id
+        except:
+            raise ValueError
     
 
-    def login(self, email, password):
+    def login(self, password, email):
         id_user = self.__db.login(password,email)
         if isinstance(id_user,int):
             self.read(id_user)
+            return self
         else:
             print(id_user)
+    
 
-
+    # READ
     def read(self, id:int):
         cursor = self.__db.get_cursor()
         sql = """
@@ -61,96 +80,83 @@ class User():
         """
         cursor.execute(sql,(id,))
         result = cursor.fetchone()
+        cursor.close()
+        if result is None:
+            return None
+        
+        self.__id = id
         self.__firstname = result[0]
         self.__lastname = result[1]
         self.__email = result[2]
         self.__is_admin = result[3]
-        self.__id = id
         self.__instantiate_bank_accounts()
         self.selected_bank_account_index = 0
-        return [self.__id, self.__firstname, self.__lastname, self.__email, self.__is_admin, self.__bank_accounts] 
-
-### NEED TO BE REFACTORED ###
-    def update_firstname(self, new_name :str):
-        cursor = self.__db.get_cursor()
-        sql = """
-        UPDATE user
-        SET firstname =%s
-        WHERE id = %s
-        """
-        cursor.execute(sql,(new_name,self.__id))
-        self.__db.connect.commit()
-        self.__db.close_c()
-        self.__db.close_db()  
-        return
-     
-
-    def update_lastname(self, new_lastname:str, id:int):
-        cursor = self.__db.get_cursor()
-        sql = """
-        UPDATE user
-        SET lastname =%s
-        WHERE id = %s
-        """
-        cursor.execute(sql,(new_lastname,id))
-        self.__db.connect.commit()
-        self.__db.close_c()
-        self.__db.close_db()  
-        return
-
-
-    def update_email(self, new_email:str, id):
-        cursor = self.__db.get_cursor()
-        sql = """
-        UPDATE user
-        SET email =%s
-        WHERE id = %s
-        """
-        cursor.execute(sql,(new_email,id))
-        self.__db.connect.commit()
-        self.__db.close_c()
-        self.__db.close_db()  
-        return
-### NEED TO BE REFACTORED END ###
- 
-
-    def update_password(self, new_password:str):
-
-        cursor = self.__db.get_cursor()
-        # DON'T FORGET TO HASH PASSWORD
-        new_password = self.__db.hash_password(new_password)
-
-        sql = """
-        UPDATE user
-        SET password =%s
-        WHERE id = %s
-        """
-        cursor.execute(sql,(new_password,self.__id))
-        self.__db.connect.commit()
-        self.__db.close_c()
-        self.__db.close_db()  
-        return
+        return [self.__id,
+                self.__firstname,
+                self.__lastname,
+                self.__email,
+                self.__is_admin,
+                self.__bank_accounts] 
     
+    
+    def read_all_email(self):
+        cursor = self.__db.get_cursor()
+        cursor.execute("SELECT email FROM user")
+        result = cursor.fetchall()
+        return result
+    
+    # UPDATE CONTROLLER
+    def __update_field(self, field: str, value):
+        allowed = {'firstname', 'lastname', 'email', 'password', 'is_admin'}
+        if field not in allowed:
+            raise ValueError("Invalid field name")
+        cursor = self.__db.get_cursor()
+        sql = "UPDATE user SET %s = %s WHERE id = %s"
+        cursor.execute(sql, (field, value, self.__id))
+        self.__db.connect.commit()
+        cursor.close()
+    # UPDATERS
+    def update_firstname(self, new_name: str):
+        self.__update_field("firstname", new_name)
+        self.__firstname = new_name
 
+    def update_lastname(self, new_lastname: str):
+        self.__update_field("lastname", new_lastname)
+        self.__lastname = new_lastname
+
+    def update_email(self, new_email: str):
+        self.__update_field("email", new_email)
+        self.__email = new_email
+
+    def update_password(self, new_password: str):
+        hashed = self.__db.hash_password(new_password)
+        self.__update_field("password", hashed)
+    
+    def update_is_admin(self, admin_bool):
+            if admin_bool != 'False' or admin_bool != 'True':
+                raise ValueError("Invalid value")
+            self.__update_field('is_admin', admin_bool)
+            self.__is_admin = admin_bool
+    
+    # DELETE
     def delete(self, id):
         #DEL CASCADE !
         cursor = self.__db.get_cursor()
         sql = "DELETE FROM user WHERE id=%s"
         cursor.execute(sql, (id,))
         self.__db.connect.commit()
-        delete_row = cursor.rowcount
-        self.__db.close_c()
+        deleted = cursor.rowcount
+        cursor.close()
 
-        if delete_row == 0:
-            print("ECHEC: Aucun utilisateur trouvé avec cet ID.")  
+        if deleted == 0:
+            print("FAIL: No users were found with this ID.")  
         
-        elif delete_row == 1:
-            print("REUSSITE: Utilisateur trouvé avec cet ID.")      
-        return delete_row
+        elif deleted == 1:
+            print("SUCCESS: User found with this ID.")      
+        return deleted
 
 
     def __instantiate_bank_accounts(self):
-
         self.__bank_accounts = []
         cursor = self.__db.get_cursor()
         sql = """
@@ -160,7 +166,7 @@ class User():
         """
         cursor.execute(sql,(self.__id,))
         results = cursor.fetchall()
-
+        cursor.close()
         for result in results:
             bank_account = BankAccount()
             bank_account.read(result[0])
