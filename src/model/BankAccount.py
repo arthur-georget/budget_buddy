@@ -95,3 +95,10 @@ class BankAccount:
             self.__transactions.append(transaction)
 
         cursor.close()
+
+
+    def new_transaction(self, transaction_type: str, category: str, amount: float):
+        
+        transaction = Transaction()
+        transaction.create(self.__id, transaction_type, category, amount)
+        self.__transactions.append(transaction)
