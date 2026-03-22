@@ -19,16 +19,16 @@ class BankAccount:
         return self.__transactions
 
 
-    def create(self, id_user:int, balance = 0):
+    def create(self, balance = 0):
         
         self.__balance = balance
         self.__transactions = []
 
         cursor = self.__db.get_cursor()
-        sql = """ INSERT INTO bank_account (id, balance)
-        VALUES (%s, %s)
+        sql = """ INSERT INTO bank_account (balance)
+        VALUES (%s)
         """
-        cursor.execute(sql,(id_user, balance))
+        cursor.execute(sql,(balance,))
         self.__db.connect.commit()
         lastrow = cursor.lastrowid
         cursor.close()
