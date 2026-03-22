@@ -90,9 +90,15 @@ class TransactionsRecordFrame(ctk.CTkFrame):
         for i in range(len(transactions)-1,0,-1):
             if ((category_filter != "" and transactions[i].get_category() != category_filter) or
                 (transaction_type_filter != "" and transactions[i].get_type() != transaction_type_filter) or
-                (start_date_filter != "" and transactions[i].get_date() < start_date_filter) or
-                (end_date_filter != "" and  transactions[i].get_date() > end_date_filter)):
+                (start_date_filter != "" and (transactions[i].get_date() < start_date_filter)) or
+                (end_date_filter != "" and  (transactions[i].get_date() > end_date_filter))):
                 transactions.pop(i)
+
+        if ((category_filter != "" and transactions[0].get_category() != category_filter) or
+                (transaction_type_filter != "" and transactions[0].get_type() != transaction_type_filter) or
+                (start_date_filter != "" and (transactions[0].get_date() < start_date_filter)) or
+                (end_date_filter != "" and  (transactions[0].get_date() > end_date_filter))):
+                transactions.pop(0)
             
 
         scrollable_transactions = ScrollableTransactionsRecordFrame(self, transactions, height=500, width=730)
