@@ -32,7 +32,7 @@ class UserConnectionFrame(ctk.CTkFrame):
         password = self.password_input.get()
         user = User()
         result = user.login(password, email)
-        if isinstance(result, User) and result.__is_admin == 'True':
+        if isinstance(result, User) and result.get_is_admin() == 'True':
             self.controller.show_frame("BankerFrame")
         elif isinstance(result, User):
             #user = User()

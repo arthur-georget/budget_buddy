@@ -47,9 +47,9 @@ class BankAccount:
         result = cursor.fetchone()
         self.__id = id
         self.__balance = result[0]
-        self.__instantiate_transactions()
-
         cursor.close()
+
+        self.__instantiate_transactions()
 
 
 
@@ -93,3 +93,5 @@ class BankAccount:
             transaction = Transaction()
             transaction.read(result[0])
             self.__transactions.append(transaction)
+
+        cursor.close()

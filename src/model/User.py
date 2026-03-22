@@ -19,10 +19,13 @@ class User():
     def get_all_email(self):
         cursor = self.__db.get_cursor()
         sql = ("SELECT email FROM user")
+
     def get_bank_accounts(self):
         return self.__bank_accounts
     
-    
+    def get_is_admin(self):
+        return self.__is_admin
+
     #CREATE
     def create(self, firstname:str, lastname:str, email:str, password:str, is_admin = 'False'):
         try:
@@ -67,6 +70,7 @@ class User():
         id_user = self.__db.login(password,email)
         if isinstance(id_user,int):
             self.read(id_user)
+            return self
         else:
             print(id_user)
     
