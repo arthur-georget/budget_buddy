@@ -31,8 +31,7 @@ class BankAccount:
         cursor.execute(sql,(id_user, balance))
         self.__db.connect.commit()
         lastrow = cursor.lastrowid
-        self.__db.close_c()
-        self.__db.close_db()
+        cursor.close()
         return lastrow
 
 
@@ -50,8 +49,8 @@ class BankAccount:
         self.__balance = result[0]
         self.__instantiate_transactions()
 
-        self.__db.close_c()
-        self.__db.close_db()
+        cursor.close()
+
 
 
     def read_with_transaction(self, id_user):
@@ -66,8 +65,8 @@ class BankAccount:
         self.__id = id
         self.__balance = result[0]
 
-        self.__db.close_c()
-        self.__db.close_db()
+        cursor.close()
+
 
 
     def update(self):

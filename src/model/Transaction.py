@@ -51,4 +51,3 @@ class Transaction:
         self.__amount = result[4]
 
         cursor.close()
-        self.__db.close_db()
