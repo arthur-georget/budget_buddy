@@ -70,7 +70,7 @@ pip install customtkinter CTKMessagebox bcrypt mysql-connector-python
 
 Setup your MySQL database:
 ```bash
-py env.py
+py init_db.py
 ```
 
 ## Quick Start
