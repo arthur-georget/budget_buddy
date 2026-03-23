@@ -1,5 +1,7 @@
 import customtkinter as ctk
 from src.model.User import User
+import re
+from CTkMessagebox import CTkMessagebox
 class NewUserFrame(ctk.CTkFrame):
     def __init__(self, parent, controller, user):
         ctk.CTkFrame.__init__(self, parent)
@@ -31,6 +33,15 @@ class NewUserFrame(ctk.CTkFrame):
         ctk.CTkButton(self, text="Back", fg_color="transparent", border_width=1, 
                       command=lambda: controller.show_frame("UserConnectionFrame")).grid(row=8, sticky="n")
 
+    def check_regex_pattern(self, pattern):
+        reg = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$#%])[A-Za-z\d@$#%]{6,20}$"
+        pat = re.compile(reg)
+        match = re.search(pat, pattern)
+        if match:
+            True
+        else:
+            False
+
     def register(self):
         firstname = self.firstname_input.get()
         lastname = self.lastname_input.get()
@@ -38,10 +49,14 @@ class NewUserFrame(ctk.CTkFrame):
         password = self.password_input.get()
         password_check = self.password_check_input.get()
         print(User.create.__code__.co_varnames)
-
         if password_check == password:
-            new_user = User()
-            result = new_user.create(firstname, lastname, email, password)
-            self.controller.set_user_in_frames(result)
-            self.controller.show_frame("MainFrame") # Just to be quicker
-            #self.controller.show_frame("UserConnectionFrame")
+            if self.check_regex_pattern(password) == True:
+                new_user = User()
+                result = new_user.create(firstname, lastname, email, password)
+                self.controller.set_user_in_frames(result)
+                self.controller.show_frame("MainFrame")
+                CTkMessagebox(title="Success", message=f"Your account creation is successful.", icon="check")
+            else:
+               CTkMessagebox(title="Error", message="Sorry your password is different than your confirmation password.", icon="warning")
+        else:
+            CTkMessagebox(title="Error", message="Sorry your password must contain at least a lowercase letter, a uppercase letter, a digit and a special character.", icon="warning")
