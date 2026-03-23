@@ -47,10 +47,16 @@ class App(ctk.CTk):
 
     def set_user_in_frames(self, event = None):
 
-        if self.current_user is not None:    
+        if event == None:
+            if self.current_user is not None:    
+                for frame in self.frames.values():
+                    if frame.__class__ in [MainFrame, TransactionsRecordFrame, BankerFrame]:
+                        frame.set_user(self.current_user)
+
+        elif str(event.widget) == ".!ctkframe.!transactionsrecordframe":
             for frame in self.frames.values():
-                if frame.__class__ in [MainFrame, TransactionsRecordFrame, BankerFrame]:
-                    frame.set_user(self.current_user)
+                    if frame.__class__ in [MainFrame, TransactionsRecordFrame, BankerFrame]:
+                        frame.set_user(self.current_user)
 
 
 if __name__ == "__main__":
