@@ -34,7 +34,7 @@ class NewUserFrame(ctk.CTkFrame):
                       command=lambda: controller.show_frame("UserConnectionFrame")).grid(row=8, sticky="n")
 
     def check_regex_pattern(self, pattern):
-        reg = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$#%])[A-Za-z\d@$#%]{6,20}$"
+        reg = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$#%-_,.:;!&()?])[A-Za-z\d@$#%-_,.:;!&()?]{6,20}$"
         pat = re.compile(reg)
         match = re.search(pat, pattern)
         if match:
