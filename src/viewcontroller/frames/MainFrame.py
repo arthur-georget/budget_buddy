@@ -56,11 +56,15 @@ class MainFrame(ctk.CTkFrame):
                     CTkMessagebox(title="Error", message="Amount must be positive.", icon="warning")
             except ValueError:
                 CTkMessagebox(title="Error", message="Please enter a valid number.", icon="cancel")
+        self.__balance = self.__selected_bank_account.get_balance()
+        self.__update_infos()
 
 
     def __instantiate_transfer_popup(self):
 
         TransferPopUp(self)
+        self.__balance = self.__selected_bank_account.get_balance()
+        self.__update_infos()
 
     
     def set_user(self, user: User):
