@@ -59,4 +59,4 @@ class NewUserFrame(ctk.CTkFrame):
             else:
                CTkMessagebox(title="Error", message="Sorry your password is different than your confirmation password.", icon="warning")
         else:
-            CTkMessagebox(title="Error", message="Sorry your password must contain at least a lowercase letter, a uppercase letter and a special character.", icon="warning")
+            CTkMessagebox(title="Error", message="Sorry your password must contain at least a lowercase letter, a uppercase letter, a digit and a special character.", icon="warning")
