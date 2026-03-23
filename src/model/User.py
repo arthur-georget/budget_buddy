@@ -140,19 +140,36 @@ class User():
     
     # DELETE
     def delete(self, id):
-        #DEL CASCADE !
         cursor = self.__db.get_cursor()
-        sql = "DELETE FROM user WHERE id=%s"
+
+        sql = """
+            SELECT bank_account_id 
+            FROM user_bank_account 
+            WHERE user_id = %s
+        """
+        cursor.execute(sql,(id,))
+        accounts = cursor.fetchall()
+
+        sql ="DELETE FROM user WHERE id = %s"
         cursor.execute(sql, (id,))
         self.__db.connect.commit()
         deleted = cursor.rowcount
-        cursor.close()
 
-        if deleted == 0:
-            print("FAIL: No users were found with this ID.")  
-        
-        elif deleted == 1:
-            print("SUCCESS: User found with this ID.")      
+        for (account_id,) in accounts:
+            sql = """
+                SELECT COUNT(*) 
+                FROM user_bank_account 
+                WHERE bank_account_id = %s
+            """
+
+            cursor.execute(sql, (account_id,))
+            (count,) = cursor.fetchone()
+            if count == 0:
+                sql ="DELETE FROM bank_account WHERE id = %s"
+                cursor.execute(sql, (account_id,))
+                self.__db.connect.commit()
+
+        cursor.close()
         return deleted
 
 
