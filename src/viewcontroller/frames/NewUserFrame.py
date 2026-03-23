@@ -38,9 +38,9 @@ class NewUserFrame(ctk.CTkFrame):
         pat = re.compile(reg)
         match = re.search(pat, pattern)
         if match:
-            True
+            return True
         else:
-            False
+            return False
 
     def register(self):
         firstname = self.firstname_input.get()
@@ -53,10 +53,10 @@ class NewUserFrame(ctk.CTkFrame):
             if self.check_regex_pattern(password) == True:
                 new_user = User()
                 result = new_user.create(firstname, lastname, email, password)
-                self.controller.set_user_in_frames(result)
-                self.controller.show_frame("MainFrame")
                 CTkMessagebox(title="Success", message=f"Your account creation is successful.", icon="check")
+                self.controller.set_user_in_frames(result)
+                self.controller.show_frame("UserConnectionFrame")
             else:
-               CTkMessagebox(title="Error", message="Sorry your password is different than your confirmation password.", icon="warning")
+                CTkMessagebox(title="Error", message="Sorry your password must contain at least a lowercase letter, a uppercase letter, a digit and a special character.", icon="warning")
         else:
-            CTkMessagebox(title="Error", message="Sorry your password must contain at least a lowercase letter, a uppercase letter, a digit and a special character.", icon="warning")
+            CTkMessagebox(title="Error", message="Sorry your password is different than your confirmation password.", icon="warning")
